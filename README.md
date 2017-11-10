@@ -1,4 +1,5 @@
-# cloudops-dev-example
+# Easter Seals Cloud Ops Dev Example
+
 An example application to showcase CI and deployment procedures.
 
 ## Prerequisites
