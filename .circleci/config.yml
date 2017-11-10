@@ -1,34 +1,84 @@
-# Javascript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+      - image: circleci/node:latest
+
 version: 2
 jobs:
   build:
-    docker:
-      # specify the version you desire here
-      - image: circleci/node:latest
-
-    working_directory: ~/repo
-
+    <<: *defaults
     steps:
       - checkout
-
-      # Download and cache dependencies
+      - setup_remote_docker:
+          docker_layer_caching: true
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
       - run: yarn install
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
-      # run tests!
       - run: yarn test
-
-
+  bundle:
+    <<: *defaults
+    steps:
+      - checkout
+      - run:
+          name: Bundle Application
+          command: |
+              yarn install
+              mkdir artifacts
+              zip -r artifacts/build.zip ./*
+      - store_artifacts:
+          path: artifacts
+      - persist_to_workspace:
+          root: artifacts
+          paths:
+            - build.zip
+  publish:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: /tmp/artifacts
+      - run: printenv
+      - run:
+          name: Setup Python
+          command: |
+            python --version
+            sudo apt-get update
+            sudo apt-get install -y python-dev
+      - run:
+          name: Setup awscli
+          command: |
+            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+            unzip awscli-bundle.zip
+            ./awscli-bundle/install -b ~/bin/aws
+            export PATH=~/bin:$PATH
+            ls -la ~/bin
+      - run:
+          name: Publish S3 Bundle
+          command: |
+            cd ~/bin
+            ./aws s3 --region $AWS_DEFAULT_REGION cp /tmp/artifacts/build.zip s3://esba-cloud-ops/application-builds/$CIRCLE_PROJECT_REPONAME-$(echo $CIRCLE_SHA1 | cut -c -7).zip
+workflows:
+  version: 2
+  build_bundle:
+    jobs:
+      - build
+      - bundle
+  build_deploy:
+    jobs:
+      - build
+      - bundle:
+          requires:
+            - build
+      - publish:
+          requires:
+            - build
+            - bundle
+          # filters:
+          #   branches:
+          #     only: master
