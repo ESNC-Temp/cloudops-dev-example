@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/EasterSealsBayArea/cloudops-dev-example.svg?style=svg)](https://circleci.com/gh/EasterSealsBayArea/cloudops-dev-example)
+
 # Easter Seals Cloud Ops Dev Example
 
 An example application to showcase CI and deployment procedures.
