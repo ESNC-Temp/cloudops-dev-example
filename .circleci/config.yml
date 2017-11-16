@@ -100,12 +100,12 @@ workflows:
           requires:
             - build
             - bundle
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
       - deploy:
           requires:
             - publish
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
