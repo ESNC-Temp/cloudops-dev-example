@@ -43,7 +43,6 @@ jobs:
     steps:
       - attach_workspace:
           at: /tmp/artifacts
-      - run: printenv
       - run:
           name: Setup Python
           command: |
@@ -63,6 +62,28 @@ jobs:
           command: |
             cd ~/bin
             ./aws s3 --region $AWS_DEFAULT_REGION cp /tmp/artifacts/build.zip s3://esba-cloud-ops/application-builds/$CIRCLE_PROJECT_REPONAME-$(echo $CIRCLE_SHA1 | cut -c -7).zip
+            ./aws elasticbeanstalk create-application-version --application-name $CIRCLE_PROJECT_REPONAME --version-label $CIRCLE_PROJECT_REPONAME-$(echo $CIRCLE_SHA1 | cut -c -7) --description "CI bundle" --source-bundle "S3Bucket=esba-cloud-ops,S3Key=application-builds/$CIRCLE_PROJECT_REPONAME-$(echo $CIRCLE_SHA1 | cut -c -7).zip"
+  deploy:
+    <<: *defaults
+    steps:
+      - run:
+          name: Setup Python
+          command: |
+            python --version
+            sudo apt-get update
+            sudo apt-get install -y python-dev
+      - run:
+          name: Setup awscli
+          command: |
+            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+            unzip awscli-bundle.zip
+            ./awscli-bundle/install -b ~/bin/aws
+            export PATH=~/bin:$PATH
+      - run:
+          name: Deploy
+          command: |
+            cd ~/bin
+            ./aws elasticbeanstalk update-environment --application-name $CIRCLE_PROJECT_REPONAME --environment-name $CIRCLE_PROJECT_REPONAME --version-label $CIRCLE_PROJECT_REPONAME-$(echo $CIRCLE_SHA1 | cut -c -7)
 workflows:
   version: 2
   build_bundle:
@@ -79,6 +100,12 @@ workflows:
           requires:
             - build
             - bundle
+          # filters:
+          #   branches:
+          #     only: master
+      - deploy:
+          requires:
+            - publish
           # filters:
           #   branches:
           #     only: master
