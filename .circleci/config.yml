@@ -2,10 +2,10 @@ defaults: &defaults
   working_directory: ~/repo
   docker:
     # - image: esba-ops/ci-node:latest # uncomment (comment the below) to test a local image
-    - image: 973338787170.dkr.ecr.us-west-2.amazonaws.com/esba-ops/ci-node:latest
+    - image: 458662379798.dkr.ecr.us-west-2.amazonaws.com/esba-ops/ci-node:latest
       aws_auth:
-        aws_access_key_id: $ECR_OPS_ACCESS_ID
-        aws_secret_access_key: $ECR_OPS_SECRET_ACCESS_KEY
+        aws_access_key_id: $ECR_OPS_ACCESS_ID_PROD
+        aws_secret_access_key: $ECR_OPS_SECRET_ACCESS_KEY_PROD
 
 version: 2
 jobs:
@@ -44,6 +44,6 @@ workflows:
       - deploy:
           requires:
             - build
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
