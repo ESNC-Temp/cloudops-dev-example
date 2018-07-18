@@ -1,8 +1,11 @@
 defaults: &defaults
   working_directory: ~/repo
   docker:
-      - image: circleci/node:latest
-
+      # - image: circleci/node:latest
+      - image: 973338787170.dkr.ecr.us-west-2.amazonaws.com/esba-ops/ci-node:latest
+        aws_auth:
+          aws_access_key_id: $ECR_OPS_ACCESS_ID_DEV
+          aws_secret_access_key: $ECR_OPS_SECRET_ACCESS_KEY_DEV
 version: 2
 jobs:
   build:
