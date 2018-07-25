@@ -1,4 +1,5 @@
 defaults: &defaults
+  shell: /bin/bash --login -eo pipefail
   working_directory: ~/repo
   docker:
       # - image: circleci/node:latest
@@ -25,7 +26,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: npm test
-      - run: npm audit
+      # - run: npm audit
 
   deploy:
     <<: *defaults
