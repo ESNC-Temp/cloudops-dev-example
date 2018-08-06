@@ -1,7 +1,13 @@
 defaults: &defaults
+  shell: /bin/bash --login -eo pipefail
   working_directory: ~/repo
   docker:
     # - image: esba-ops/ci-node:latest # uncomment (comment the below) to test a local image
+    # uncomment to test the DEV node instance
+    # - image: 973338787170.dkr.ecr.us-west-2.amazonaws.com/esba-ops/ci-node:latest
+    #   aws_auth:
+    #     aws_access_key_id: $ECR_OPS_ACCESS_ID_DEV
+    #     aws_secret_access_key: $ECR_OPS_SECRET_ACCESS_KEY_DEV
     - image: 458662379798.dkr.ecr.us-west-2.amazonaws.com/esba-ops/ci-node:latest
       aws_auth:
         aws_access_key_id: $ECR_OPS_ACCESS_ID_PROD
@@ -18,26 +24,25 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-      - run: yarn install
+      - run: npm install
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn test
+      - run: npm test
+      # - run: npm audit
 
   deploy:
     <<: *defaults
     steps:
       - checkout
-      - run:
-          name: Deploy
-          command: |
-              /usr/ci_app/circleci.sh # create config values
-              source ~/.bashrc # workaround
-              groundhog deploy -a groundhog-testbed -e cloudops-dev-example --s3-bucket elasticbeanstalk-us-west-2-973338787170 --aws-profile default
+      - run: groundhog deploy -a groundhog-testbed -e cloudops-dev-example-1
 
 workflows:
   version: 2
+  build:
+    jobs:
+      - build
   build_deploy:
     jobs:
       - build
