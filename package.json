@@ -12,7 +12,7 @@
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "express": "^4.16.3",
-    "log4js": "^2.10.0",
+    "log4js": "^3.0.2",
     "log4js-sumologic-appender": "johncblandii/log4js-sumologic-appender.git",
     "morgan": "~1.9.0",
     "pug": "^2.0.3",
