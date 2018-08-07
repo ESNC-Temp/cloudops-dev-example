@@ -13,7 +13,7 @@
     "debug": "~2.6.9",
     "express": "^4.16.3",
     "log4js": "^3.0.2",
-    "log4js-sumologic-appender": "johncblandii/log4js-sumologic-appender.git",
+    "log4js-sumologic-appender": "~1.0.0",
     "morgan": "~1.9.0",
     "pug": "^2.0.3",
     "serve-favicon": "~2.4.5"
