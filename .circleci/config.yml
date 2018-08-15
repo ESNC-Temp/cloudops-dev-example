@@ -30,13 +30,25 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run: npm test
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+  audit:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
       - run: npm audit
 
   deploy:
     <<: *defaults
     steps:
-      - checkout
-      - run: groundhog deploy -a groundhog-testbed -e cloudops-dev-example-1
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: npm run deploy
 
 workflows:
   version: 2
@@ -46,6 +58,9 @@ workflows:
   build_deploy:
     jobs:
       - build
+      - audit:
+          requires:
+            - build
       - deploy:
           requires:
             - build
