@@ -63,6 +63,8 @@ workflows:
             - build
       - deploy_approval:
           type: approval
+          requires:
+            - audit
       - deploy:
           requires:
             - deploy_approval
