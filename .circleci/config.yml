@@ -65,9 +65,9 @@ workflows:
           type: approval
           requires:
             - audit
-      - deploy:
-          requires:
-            - deploy_approval
           filters:
             branches:
               only: master
+      - deploy:
+          requires:
+            - deploy_approval
