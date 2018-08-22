@@ -62,8 +62,9 @@ workflows:
           requires:
             - build
       - deploy:
+          type: approval
           requires:
-            - build
+            - audit
           filters:
             branches:
               only: master
