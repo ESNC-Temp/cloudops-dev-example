@@ -4,14 +4,11 @@ defaults: &defaults
   docker:
     # - image: esba-ops/ci-node:latest # uncomment (comment the below) to test a local image
     # uncomment to test the DEV node instance
-    # - image: 973338787170.dkr.ecr.us-west-2.amazonaws.com/esba-ops/ci-node:latest
-    #   aws_auth:
-    #     aws_access_key_id: $ECR_OPS_ACCESS_ID_DEV
-    #     aws_secret_access_key: $ECR_OPS_SECRET_ACCESS_KEY_DEV
-    - image: 458662379798.dkr.ecr.us-west-2.amazonaws.com/esba-ops/ci-node:latest
+    # - image: 496386341798.dkr.ecr.us-west-2.amazonaws.com/esba-ops/ci-node:latest
+    - image: 333878251527.dkr.ecr.us-west-2.amazonaws.com/ci_node:latest
       aws_auth:
-        aws_access_key_id: $ECR_OPS_ACCESS_ID_PROD
-        aws_secret_access_key: $ECR_OPS_SECRET_ACCESS_KEY_PROD
+        aws_access_key_id: $ECR_AWS_ACCESS_KEY_ID
+        aws_secret_access_key: $ECR_AWS_SECRET_ACCESS_KEY
 
 version: 2
 jobs:
@@ -54,11 +51,14 @@ workflows:
   version: 2
   build:
     jobs:
-      - build
+      - build:
+          context: esba-ops-dev
   build_deploy:
     jobs:
-      - build
+      - build:
+          context: esba-ops-dev
       - audit:
+          context: esba-ops-dev
           requires:
             - build
       - deploy_approval:
@@ -69,5 +69,6 @@ workflows:
             branches:
               only: master
       - deploy:
+          context: esba-ops-dev
           requires:
             - deploy_approval
