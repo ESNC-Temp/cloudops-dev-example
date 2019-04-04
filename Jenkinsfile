@@ -10,7 +10,7 @@ pipeline {
   stages {
     stage('Build') {
       input {
-        message 'Deploy to  UAT?', 
+        message 'Deploy to  UAT?'
         ok 'Deploy'
       }
       steps {
