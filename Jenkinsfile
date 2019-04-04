@@ -8,6 +8,21 @@ pipeline {
     CI = 'true' 
   }
   stages {
+    stage('Build') {
+      steps {
+        container('node') {
+          sh 'npm install'
+          sh 'npm test' 
+        }
+      }
+    }
+    stage('Audit') {
+      steps {
+        container('node') {
+          sh 'npm audit' 
+        }
+      }
+    }
     stage('Release') {
       parallel {
         stage('Echo') {
@@ -38,21 +53,6 @@ pipeline {
           steps {
             echo 'Whale helllllllllo!'
           }
-        }
-      }
-    }
-    stage('Build') {
-      steps {
-        container('node') {
-          sh 'npm install'
-          sh 'npm test' 
-        }
-      }
-    }
-    stage('Audit') {
-      steps {
-        container('node') {
-          sh 'npm audit' 
         }
       }
     }
