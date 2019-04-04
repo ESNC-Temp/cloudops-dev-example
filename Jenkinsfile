@@ -16,6 +16,8 @@ pipeline {
         }
       }
       when {
+        beforeAgent true
+        beforeInput true
         changeRequest()
       }
       options {
