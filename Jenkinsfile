@@ -69,5 +69,6 @@ pipeline {
       always {
         jiraAddComment idOrKey: 'DEVOPS-477', input: [ body: 'Testing' ]
       }
+    }
   }
 }
