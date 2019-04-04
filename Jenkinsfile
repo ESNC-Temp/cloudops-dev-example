@@ -21,7 +21,7 @@ pipeline {
       post {
         always {
           script {
-            jiraAddComment idOrKey: 'DEVOPS-477', input: [ body: 'Testing' ]
+            jiraAddComment idOrKey: 'DEVOPS-477', input: [ body: 'Testing' ], site: 'ESBA'
           }
         }
       }
