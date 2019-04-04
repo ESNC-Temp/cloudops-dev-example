@@ -21,7 +21,7 @@ pipeline {
       post {
         always {
           script {
-            jiraAddComment idOrKey: 'DEVOPS-477', input: [ body: 'Comment from Jenkins' ]
+            jiraComment body: 'Testing Jenkins Integration', issueKey: 'DEVOPS-477'
           }
         }
       }
