@@ -20,7 +20,9 @@ pipeline {
       }
       post {
         always {
-          jiraAddComment idOrKey: 'DEVOPS-477', input: [ body: 'Comment from Jenkins' ]
+          script {
+            jiraAddComment idOrKey: 'DEVOPS-477', input: [ body: 'Comment from Jenkins' ]
+          }
         }
       }
     }
