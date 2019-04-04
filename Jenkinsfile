@@ -18,6 +18,11 @@ pipeline {
           sh 'npm test' 
         }
       }
+      post {
+        always {
+          jiraAddComment idOrKey: 'DEVOPS-477', input: [ body: 'Comment from Jenkins' ]
+        }
+      }
     }
     stage('Audit') {
       when {
@@ -64,11 +69,6 @@ pipeline {
           }
         }
       }
-    }
-  }
-  post {
-    always {
-      jiraAddComment idOrKey: 'DEVOPS-477', input: [ body: 'Comment from Jenkins' ]
     }
   }
 }
