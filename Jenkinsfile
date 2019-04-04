@@ -8,7 +8,7 @@ pipeline {
     CI = 'true' 
   }
   stages {
-    stage('Build') {
+    stage('Verify') {
       input {
         message 'Deploy to  UAT?'
         ok 'Deploy'
