@@ -9,6 +9,15 @@ pipeline {
   }
   stages {
     stage('Build') {
+      input {
+        message: 'Deploy to  UAT?', 
+        ok: 'Deploy'
+      }
+      steps {
+        echo 'Whale helllllllllo!'
+      }
+    }
+    stage('Build') {
       steps {
         container('node') {
           sh 'npm install'
