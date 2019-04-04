@@ -10,8 +10,8 @@ pipeline {
   stages {
     stage('Build') {
       input {
-        message: 'Deploy to  UAT?', 
-        ok: 'Deploy'
+        message 'Deploy to  UAT?', 
+        ok 'Deploy'
       }
       steps {
         echo 'Whale helllllllllo!'
