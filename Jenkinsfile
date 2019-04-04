@@ -8,28 +8,36 @@ pipeline {
     CI = 'true' 
   }
   stages {
-    stage('Verify') {
-      agent {
-        kubernetes {
-          label 'xolvci'
-          defaultContainer 'jnlp-slave'
+    stage('Release') {
+    parallel {
+      stage('Echo') {
+        steps {
+          echo "Starting build"
         }
       }
-      when {
-        beforeAgent true
-        beforeInput true
-        changeRequest()
-      }
-      options {
-        retry(1)
-        timeout(time: 1, unit: 'HOURS')
-      }
-      input {
-        message 'Deploy to  UAT?'
-        ok 'Deploy'
-      }
-      steps {
-        echo 'Whale helllllllllo!'
+      stage('Verify') {
+        agent {
+          kubernetes {
+            label 'xolvci'
+            defaultContainer 'jnlp-slave'
+          }
+        }
+        when {
+          beforeAgent true
+          beforeInput true
+          changeRequest()
+        }
+        options {
+          retry(1)
+          timeout(time: 1, unit: 'HOURS')
+        }
+        input {
+          message 'Deploy to  UAT?'
+          ok 'Deploy'
+        }
+        steps {
+          echo 'Whale helllllllllo!'
+        }
       }
     }
     stage('Build') {
