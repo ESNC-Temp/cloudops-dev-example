@@ -9,6 +9,19 @@ pipeline {
   }
   stages {
     stage('Verify') {
+      agent {
+        kubernetes {
+          label 'xolvci'
+          defaultContainer 'jnlp-slave'
+        }
+      }
+      when {
+        changeRequest()
+      }
+      options {
+        retry(1)
+        timeout(time: 1, unit: 'HOURS')
+      }
       input {
         message 'Deploy to  UAT?'
         ok 'Deploy'
