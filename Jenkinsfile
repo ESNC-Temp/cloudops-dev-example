@@ -9,6 +9,9 @@ pipeline {
   }
   stages {
     stage('Build') {
+      when {
+        changeRequest()
+      }
       steps {
         container('node') {
           sh 'npm install'
@@ -17,15 +20,19 @@ pipeline {
       }
     }
     stage('Audit') {
+      when {
+        changeRequest()
+      }
       steps {
-        container('node') {
-          echo 'Audited'
-        }
+        echo 'Audited'
       }
     }
     stage('Release') {
       parallel {
         stage('Echo') {
+          when {
+            changeRequest()
+          }
           steps {
             echo "Starting build"
           }
@@ -40,7 +47,9 @@ pipeline {
           when {
             beforeAgent true
             beforeInput true
-            changeRequest()
+            
+            // Example: uat/1.0.0+103
+            tag pattern: "^(?:uat)\\/((?:\\d+)\\.(?:\\d+)\\.(?:\\d+)\\+(?:\\d+))", comparator: "REGEXP"
           }
           options {
             retry(1)
