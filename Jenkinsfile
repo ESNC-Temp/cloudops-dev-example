@@ -29,7 +29,7 @@ pipeline {
     }
     stage('Release') {
       stages {
-        stage('Echo') {
+        stage('DEV') {
           when {
             changeRequest()
           }
@@ -37,24 +37,28 @@ pipeline {
             echo "Starting build"
           }
         }
-        stage('Verify') {
+        stage('UAT') {
           when {
-            beforeAgent true
-            beforeInput true
-
-            // Example: uat/1.0.0+103
-            tag pattern: "^(?:uat)\\/((?:\\d+)\\.(?:\\d+)\\.(?:\\d+)\\+(?:\\d+))", comparator: "REGEXP"
-          }
-          options {
-            retry(1)
-            timeout(time: 1, unit: 'HOURS')
-          }
-          input {
-            message 'Deploy to  UAT?'
-            ok 'Deploy'
+            changeRequest()
           }
           steps {
-            echo 'Whale helllllllllo!'
+            echo "Starting build"
+          }
+        }
+        stage('PROD') {
+          when {
+            changeRequest()
+          }
+          steps {
+            echo "Starting build"
+          }
+        }
+        stage('STAGE') {
+          when {
+            changeRequest()
+          }
+          steps {
+            echo "Starting build"
           }
         }
       }
