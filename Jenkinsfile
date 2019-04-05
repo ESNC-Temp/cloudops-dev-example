@@ -38,12 +38,6 @@ pipeline {
           }
         }
         stage('Verify') {
-          agent {
-            kubernetes {
-              label 'xolvci'
-              defaultContainer 'jnlp-slave'
-            }
-          }
           when {
             beforeAgent true
             beforeInput true
