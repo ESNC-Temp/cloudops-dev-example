@@ -28,32 +28,34 @@ pipeline {
       }
     }
     stage('Release') {
-      stage('Echo') {
-        when {
-          changeRequest()
+      stages {
+        stage('Echo') {
+          when {
+            changeRequest()
+          }
+          steps {
+            echo "Starting build"
+          }
         }
-        steps {
-          echo "Starting build"
-        }
-      }
-      stage('Verify') {
-        when {
-          beforeAgent true
-          beforeInput true
+        stage('Verify') {
+          when {
+            beforeAgent true
+            beforeInput true
 
-          // Example: uat/1.0.0+103
-          tag pattern: "^(?:uat)\\/((?:\\d+)\\.(?:\\d+)\\.(?:\\d+)\\+(?:\\d+))", comparator: "REGEXP"
-        }
-        options {
-          retry(1)
-          timeout(time: 1, unit: 'HOURS')
-        }
-        input {
-          message 'Deploy to  UAT?'
-          ok 'Deploy'
-        }
-        steps {
-          echo 'Whale helllllllllo!'
+            // Example: uat/1.0.0+103
+            tag pattern: "^(?:uat)\\/((?:\\d+)\\.(?:\\d+)\\.(?:\\d+)\\+(?:\\d+))", comparator: "REGEXP"
+          }
+          options {
+            retry(1)
+            timeout(time: 1, unit: 'HOURS')
+          }
+          input {
+            message 'Deploy to  UAT?'
+            ok 'Deploy'
+          }
+          steps {
+            echo 'Whale helllllllllo!'
+          }
         }
       }
     }
