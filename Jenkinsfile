@@ -12,7 +12,7 @@ pipeline {
   }
   stages {
     stage('Release') {
-      stages {
+      parallel {
         stage('DEV') {
           when {
             beforeAgent true
