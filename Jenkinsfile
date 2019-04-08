@@ -17,7 +17,7 @@ pipeline {
           when {
             beforeAgent true
             beforeInput true
-            branch 'develop'
+            branch 'feature/jenkins-approvals'
           }
           input {
             message 'Approved for DEV release?'
