@@ -5,7 +5,10 @@ pipeline {
     }
   }
   environment {
-    CI = 'true' 
+    CI = 'true'
+    IMAGE_NAME = 'cloudops-dev-example'
+    JFROG_DOMAIN = 'docker.registry.prod.xolv.app'
+    REGISTRY_NAME = 'jfrog'
   }
   stages {
     stage('Build') {
@@ -14,8 +17,7 @@ pipeline {
       }
       steps {
         container('node') {
-          sh 'npm install'
-          sh 'npm test' 
+          sh 'yarn'
         }
       }
     }
@@ -24,24 +26,65 @@ pipeline {
         changeRequest()
       }
       steps {
-        echo 'Audited'
+        container('node') {
+          sh 'yarn audit'
+        }
       }
     }
-    stage('Release') {
+    stage('Push DEV') {
       when {
         beforeAgent true
         beforeInput true
-
-        // Example: uat/1.0.0+103
-        tag pattern: "^(?:uat)\\/((?:\\d+)\\.(?:\\d+)\\.(?:\\d+)\\+(?:\\d+))", comparator: "REGEXP"
-      }
-      input {
-        message 'Deploy to  UAT?'
-        ok 'Deploy'
+        branch 'PR-26'
       }
       steps {
-        echo 'Whale helllllllllo!'
+        container('jnlp-slave') {
+          sh 'yarn docker:build'
+          publishImage(GIT_COMMIT)
+        }
       }
     }
+    // stage('Promote to UAT') {
+    //   when {
+    //     beforeAgent true
+    //     beforeInput true
+    //     branch 'PR-26'
+
+    //     // Example: uat/1.0.0+103
+    //     // tag pattern: "^(?:uat)\\/((?:\\d+)\\.(?:\\d+)\\.(?:\\d+)\\+(?:\\d+))", comparator: "REGEXP"
+    //   }
+    //   input {
+    //     message 'Deploy to  UAT?'
+    //     ok 'Deploy'
+    //   }
+    //   steps {
+    //     echo 'Promote to UAT'
+    //     promote('dev', 'uat')
+    //   }
+    // }
+  }
+}
+
+def promote(sourceStage, targetStage) {
+  rtAddInteractivePromotion(
+    copy: true,
+    failFast: true,
+    includeDependencies: true,
+    serverId: REGISTRY_NAME,
+    sourceRepo: sourceStage == "dev" ? "docker-local" : "docker-${sourceStage}-local",
+    status: 'Released',
+    targetRepo: "docker-${targetStage}-local"
+  )
+}
+
+def publishImage(String tag) {
+  sh "docker tag ${IMAGE_NAME}:latest ${JFROG_DOMAIN}/${IMAGE_NAME}:${tag}"
+
+  script {
+    def server = Artifactory.server REGISTRY_NAME
+    def rtDocker = Artifactory.docker server: server
+    def buildInfo = rtDocker.push "${JFROG_DOMAIN}/${IMAGE_NAME}:${tag}", 'docker'
+    server.publishBuildInfo buildInfo
+    promote('dev', 'uat')
   }
 }
