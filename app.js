@@ -11,15 +11,22 @@ const log4js = require('log4js');
 
 log4js.configure({
   appenders: {
+    out: {
+      type: "console",
+      layout: {
+        type: "pattern",
+        pattern: "%[[%d{yyyy-MM-dd hh:mm:ss.SSS}] [%p] [%c]%] - %m"
+      }
+    },
     sumologic: {
       type: 'log4js-sumologic-appender',
-      endpoint: 'https://endpoint3.collection.us2.sumologic.com/receiver/v1/http/ZaVnC4dhaV2i-yRxOLgANZ8gHPkRhbz0uu1dVE2Ox2v7PzQOMNPoaEVTAjc9CGyEY8ntWUfXzddSGzU0Adm0FPuf0hDMp-4Bri-XwdXyX4zdiHtsuK5ugw==',
+      endpoint: 'https://endpoint3.collection.us2.sumologic.com/receiver/v1/http/ZaVnC4dhaV1dLA9llz9C-8NPtyLhvkJDyF18GcjdSiE5KiQ0jP0mpplDlwp8gQzpFcy6CfGbciFGjdg0rKsaeH4rz2nHRIv1FOE6p4WxTHNVhi4zakkyfw==',
       sourceName: process.env.SUMO_LOGIC_SOURCE_NAME || 'Cloud Devops Example'
     }
   },
   categories: {
     default: {
-      appenders: ['sumologic'],
+      appenders: ['sumologic', 'out'],
       level: 'trace'
     }
   }
@@ -39,6 +46,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
+app.use('/healthcheck', function(req, res, next) {
+  res.send('OK')
+});
 app.use('/delayedprocess', delayedprocess);
 
 // catch 404 and forward to error handler

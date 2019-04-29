@@ -3,22 +3,27 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "docker:clean": "docker-compose down --rmi local -v --remove-orphans",
+    "docker:build": "docker build . -t cloudops-dev-example:latest",
+
+    "start": "docker-compose up --remove-orphans --build",
+    "prestart:clean": "yarn run docker:clean",
+    "start:clean": "yarn run start",
     "test": "jest",
     "deploy": "groundhog deploy -a groundhog-testbed -e cloudops-dev-example"
   },
   "dependencies": {
-    "body-parser": "~1.18.2",
+    "body-parser": "~1.19.0",
     "cookie-parser": "~1.4.3",
-    "debug": "~2.6.9",
+    "debug": "~4.1.1",
     "express": "^4.16.3",
-    "log4js": "^3.0.2",
-    "log4js-sumologic-appender": "~1.0.0",
+    "log4js": "^4.1.0",
+    "log4js-sumologic-appender": "~2.0.1",
     "morgan": "~1.9.0",
     "pug": "^2.0.3",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.5.0"
   },
   "devDependencies": {
-    "jest": "^21.2.1"
+    "jest": "^24.7.1"
   }
 }
