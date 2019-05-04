@@ -7,7 +7,7 @@ pipeline {
   environment {
     CI = 'true' 
   }
-  options { timestamps () }
+  options { timestamps() }
   stages {
     stage('Build') {
       when {
