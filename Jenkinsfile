@@ -59,13 +59,13 @@ pipeline {
     //   }
     //   steps {
     //     echo 'Promote to UAT'
-    //     promote('dev', 'uat')
+    //     addInteractivePromotion('dev', 'uat')
     //   }
     // }
   }
 }
 
-def promote(sourceStage, targetStage) {
+def addInteractivePromotion(sourceStage, targetStage) {
   rtAddInteractivePromotion(
     copy: true,
     failFast: true,
@@ -85,6 +85,14 @@ def publishImage(String tag) {
     def rtDocker = Artifactory.docker server: server
     def buildInfo = rtDocker.push "${JFROG_DOMAIN}/${IMAGE_NAME}:${tag}", 'docker'
     server.publishBuildInfo buildInfo
-    promote('dev', 'uat')
+    addInteractivePromotion('dev', 'uat')
+
+    def xrayConfig = [
+      'buildName'     : env.JOB_NAME,
+      'buildNumber'   : env.BUILD_NUMBER,
+      'failBuild'     : false
+    ]
+    def xrayResults = server.xrayScan xrayConfig
+    echo xrayResults as String
   }
 }
