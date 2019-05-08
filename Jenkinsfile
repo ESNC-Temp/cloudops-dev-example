@@ -32,7 +32,7 @@ pipeline {
         beforeAgent true
         beforeInput true
         anyOf {
-          branch "feature/jenkins-when-tests"
+          branch "feature/*"
           // Example: uat/1.0.0+103
           tag pattern: "^(?:uat)\\/((?:\\d+)\\.(?:\\d+)\\.(?:\\d+)\\+(?:\\d+))", comparator: "REGEXP"
         }
