@@ -16,7 +16,7 @@
     "log4js-sumologic-appender": "~1.0.0",
     "morgan": "~1.9.0",
     "pug": "^2.0.3",
-    "serve-favicon": "~2.4.5"
+    "serve-favicon": "~2.5.0"
   },
   "devDependencies": {
     "jest": "^21.2.1"
