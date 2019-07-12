@@ -1,10 +1,13 @@
 {
   "name": "cloudops-dev-example",
-  "version": "0.0.0",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "docker:clean": "docker-compose down --rmi local -v --remove-orphans",
     "docker:build": "docker build . -t cloudops-dev-example:latest",
+    "docker:tag": "docker tag cloudops-dev-example:latest docker.registry.prod.xolv.app/cloudops-dev-example:$TAG",
+    "docker:push": "docker push docker.registry.prod.xolv.app/cloudops-dev-example:$TAG",
+    "docker:release": "yarn docker:build && yarn docker:tag && yarn docker:push",
 
     "start": "docker-compose up --remove-orphans --build",
     "prestart:clean": "yarn run docker:clean",
