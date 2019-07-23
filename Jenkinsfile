@@ -11,6 +11,14 @@ pipeline {
     REGISTRY_NAME = 'jfrog'
   }
   stages {
+    stage('Initialize') {
+      steps {
+        rtServer (
+            id: REGISTRY_NAME,
+            url: JFROG_DOMAIN
+        )
+      }
+    }
     stage('Build') {
       when {
         changeRequest()
@@ -36,11 +44,9 @@ pipeline {
         branch 'PR-26'
       }
       steps {
-        rtServer (
-            id: REGISTRY_NAME,
-            url: JFROG_DOMAIN
-        )
-        docker.build(ARTIFACTORY_DOCKER_REGISTRY + "/cloudops-dev-example:$GIT_COMMIT", '.')
+        script {
+          docker.build(ARTIFACTORY_DOCKER_REGISTRY + "/$IMAGE_NAME:$GIT_COMMIT", '.')
+        }
       }
     }
     stage('Push DEV') {
@@ -52,10 +58,10 @@ pipeline {
       steps {
         rtDockerPush(
             serverId: REGISTRY_NAME,
-            image: ARTIFACTORY_DOCKER_REGISTRY + "/cloudops-dev-example:$GIT_COMMIT",
+            image: ARTIFACTORY_DOCKER_REGISTRY + "/$IMAGE_NAME:$GIT_COMMIT",
             targetRepo: 'docker-local',
             // Attach custom properties to the published artifacts:
-            properties: 'project-name=cloudops-dev-example;status=stable'
+            properties: "project-name=$IMAGE_NAME;status=pre-release"
         )
         
         rtPublishBuildInfo (
