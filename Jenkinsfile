@@ -45,7 +45,7 @@ pipeline {
       }
       steps {
         script {
-          docker.build(ARTIFACTORY_DOCKER_REGISTRY + "/$IMAGE_NAME:$GIT_COMMIT", '.')
+          docker.build(JFROG_DOMAIN + "/$IMAGE_NAME:$GIT_COMMIT", '.')
         }
       }
     }
@@ -58,7 +58,7 @@ pipeline {
       steps {
         rtDockerPush(
             serverId: REGISTRY_NAME,
-            image: ARTIFACTORY_DOCKER_REGISTRY + "/$IMAGE_NAME:$GIT_COMMIT",
+            image: JFROG_DOMAIN + "/$IMAGE_NAME:$GIT_COMMIT",
             targetRepo: 'docker-local',
             // Attach custom properties to the published artifacts:
             properties: "project-name=$IMAGE_NAME;status=pre-release"
