@@ -14,8 +14,7 @@ pipeline {
     stage('Initialize') {
       steps {
         rtServer (
-            id: REGISTRY_NAME,
-            url: JFROG_DOMAIN
+            id: REGISTRY_NAME
         )
       }
     }
