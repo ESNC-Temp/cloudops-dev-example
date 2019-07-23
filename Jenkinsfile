@@ -45,7 +45,7 @@ pipeline {
       }
       steps {
         script {
-          container('jnlp-salve') {
+          container('jnlp-slave') {
             docker.build(JFROG_DOMAIN + "/$IMAGE_NAME:$GIT_COMMIT", '.')
           }
         }
@@ -58,7 +58,7 @@ pipeline {
         branch 'PR-26'
       }
       steps {
-        container('jnlp-salve') {
+        container('jnlp-slave') {
           rtDockerPush(
               serverId: REGISTRY_NAME,
               image: JFROG_DOMAIN + "/$IMAGE_NAME:$GIT_COMMIT",
