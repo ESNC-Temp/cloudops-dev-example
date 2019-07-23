@@ -45,7 +45,9 @@ pipeline {
       }
       steps {
         script {
-          docker.build(JFROG_DOMAIN + "/$IMAGE_NAME:$GIT_COMMIT", '.')
+          container('jnlp-salve') {
+            docker.build(JFROG_DOMAIN + "/$IMAGE_NAME:$GIT_COMMIT", '.')
+          }
         }
       }
     }
@@ -56,17 +58,19 @@ pipeline {
         branch 'PR-26'
       }
       steps {
-        rtDockerPush(
-            serverId: REGISTRY_NAME,
-            image: JFROG_DOMAIN + "/$IMAGE_NAME:$GIT_COMMIT",
-            targetRepo: 'docker-local',
-            // Attach custom properties to the published artifacts:
-            properties: "project-name=$IMAGE_NAME;status=pre-release"
-        )
-        
-        rtPublishBuildInfo (
-            serverId: REGISTRY_NAME
-        )
+        container('jnlp-salve') {
+          rtDockerPush(
+              serverId: REGISTRY_NAME,
+              image: JFROG_DOMAIN + "/$IMAGE_NAME:$GIT_COMMIT",
+              targetRepo: 'docker-local',
+              // Attach custom properties to the published artifacts:
+              properties: "project-name=$IMAGE_NAME;status=pre-release"
+          )
+
+          rtPublishBuildInfo (
+              serverId: REGISTRY_NAME
+          )
+        }
       }
     }
   }
