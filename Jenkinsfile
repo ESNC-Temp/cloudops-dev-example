@@ -31,6 +31,18 @@ pipeline {
         }
       }
     }
+    stage('Docker') {
+      when {
+        branch 'PR-26'
+      }
+      steps {
+        rtServer (
+            id: REGISTRY_NAME,
+            url: JFROG_DOMAIN
+        )
+        docker.build(ARTIFACTORY_DOCKER_REGISTRY + "/cloudops-dev-example:$GIT_COMMIT", '.')
+      }
+    }
     stage('Push DEV') {
       when {
         beforeAgent true
@@ -38,30 +50,19 @@ pipeline {
         branch 'PR-26'
       }
       steps {
-        container('jnlp-slave') {
-          sh 'yarn docker:build'
-          publishImage(GIT_COMMIT)
-        }
+        rtDockerPush(
+            serverId: REGISTRY_NAME,
+            image: ARTIFACTORY_DOCKER_REGISTRY + "/cloudops-dev-example:$GIT_COMMIT",
+            targetRepo: 'docker-local',
+            // Attach custom properties to the published artifacts:
+            properties: 'project-name=cloudops-dev-example;status=stable'
+        )
+        
+        rtPublishBuildInfo (
+            serverId: REGISTRY_NAME
+        )
       }
     }
-    // stage('Promote to UAT') {
-    //   when {
-    //     beforeAgent true
-    //     beforeInput true
-    //     branch 'PR-26'
-
-    //     // Example: uat/1.0.0+103
-    //     // tag pattern: "^(?:uat)\\/((?:\\d+)\\.(?:\\d+)\\.(?:\\d+)\\+(?:\\d+))", comparator: "REGEXP"
-    //   }
-    //   input {
-    //     message 'Deploy to  UAT?'
-    //     ok 'Deploy'
-    //   }
-    //   steps {
-    //     echo 'Promote to UAT'
-    //     addInteractivePromotion('dev', 'uat')
-    //   }
-    // }
   }
 }
 
