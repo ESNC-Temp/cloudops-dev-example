@@ -1,10 +1,25 @@
-var express = require('express';
+var express = require('express');
 var router = express.Router();
 const log4js = require('log4js');
 const logger = log4js.getLogger('Cloud Devops Example');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  logger.info('Index page');
+  res.render('index', { title: 'Welcome' });
+});
+
+router.get('/1', function(req, res, next) {
+  logger.info('Index page');
+  res.render('index', { title: 'Welcome' });
+});
+
+router.get('/2', function(req, res, next) {
+  logger.info('Index page');
+  res.render('index', { title: 'Welcome' });
+});
+
+router.get('/3', function(req, res, next) {
   logger.info('Index page');
   res.render('index', { title: 'Welcome' });
 });
