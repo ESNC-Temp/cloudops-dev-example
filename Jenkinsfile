@@ -14,7 +14,8 @@ pipeline {
     stage('Initialize') {
       steps {
         rtServer (
-            id: REGISTRY_NAME
+            id: REGISTRY_NAME,
+            credentialsId: 'jfrog-integration-user-jenkins'
         )
       }
     }
